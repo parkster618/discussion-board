@@ -15,8 +15,8 @@ jobs:
     - name: Install production dependencies
       run: npm install
 
-    - name: Transpile TypeScript
-      run: ng build
+    - name: Build Angular
+      run: ./node_modules/.bin/ng build
 
     - name: Deploy to server
       run: echo '${{ secrets.SSH_PRIVATE_KEY }}' > pvt-key.txt &&

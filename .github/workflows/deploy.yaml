@@ -16,7 +16,7 @@ jobs:
       run: npm install
 
     - name: Build Angular
-      run: ./node_modules/.bin/ng build
+      run: npm build
 
     - name: Deploy to server
       run: echo '${{ secrets.SSH_PRIVATE_KEY }}' > pvt-key.txt &&

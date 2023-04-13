@@ -20,6 +20,7 @@ jobs:
 
     - name: Deploy to server
       run: pwd &&
+        ls &&
         echo '${{ secrets.SSH_PRIVATE_KEY }}' > pvt-key.txt &&
         chmod 600 pvt-key.txt &&
         rsync -avz --delete --mkpath

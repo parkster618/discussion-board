@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "discussion-board2": {
+    "discussion-board": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/discussion-board2",
+            "outputPath": "dist/discussion-board",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "discussion-board2:build:production"
+              "browserTarget": "discussion-board:build:production"
             },
             "development": {
-              "browserTarget": "discussion-board2:build:development"
+              "browserTarget": "discussion-board:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -76,7 +76,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "discussion-board2:build"
+            "browserTarget": "discussion-board:build"
           }
         },
         "test": {

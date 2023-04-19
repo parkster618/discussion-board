@@ -8,5 +8,17 @@
       "request": "launch",
       "type": "node-terminal"
     },
+    {
+      "command": "cd API && tsc && NODE_ENV=dev node build/index.js",
+      "name": "back-end (local)",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
+      "command": "cd API && tsc && NODE_ENV=prod node build/index.js",
+      "name": "back-end (prod)",
+      "request": "launch",
+      "type": "node-terminal"
+    },
   ]
 }

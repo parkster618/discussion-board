@@ -3,8 +3,10 @@ import express from 'express';
 
 // Setup Scripts
 import { initializeDataSource } from './data-source.js';
+import { setUpEnvironment } from './env-setup.js';
 
 async function startApp() {
+    await setUpEnvironment();
     await initializeDataSource();
 
     const PORT = process.env.PORT || 5000;

@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "baseUrl": ".",
+    "outDir": "./build",
+    "esModuleInterop": true,
+
+    /* "decorator" settings */
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+
+    /* "strict" settings */
+    "strict": true,
+    "noImplicitAny": false,
+    "strictPropertyInitialization": false,
+    "strictNullChecks": false,
+  },
+}

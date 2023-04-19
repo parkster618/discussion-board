@@ -1,0 +1,44 @@
+{
+  "name": "weekly-board-games",
+  "version": "0.3.0",
+  "description": "An RSVP tool for weekly board games",
+  "engines": {
+    "node": "16.x"
+  },
+  "main": "build/index.js",
+  "scripts": {
+    "start": "rm -rf ./build && tsc && set NODE_ENV=dev&& pm2 start build/index.js"
+  },
+  "dependencies": {
+    "@rollup/plugin-commonjs": "^24.1.0",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.2",
+    "@rollup/plugin-typescript": "^11.1.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mariadb": "^3.1.0",
+    "mysql": "^2.18.1",
+    "pm2": "^5.3.0",
+    "reflect-metadata": "^0.1.13",
+    "rollup": "^3.20.2",
+    "rollup-plugin-copy": "^3.4.0",
+    "typeorm": "^0.3.14"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^18.15.11",
+    "fs": "^0.0.1-security",
+    "got": "^11.3.0",
+    "typescript": "^4.9.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/parkster618/weekly-board-games"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "license": "MIT"
+}

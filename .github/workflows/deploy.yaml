@@ -19,12 +19,10 @@ jobs:
       run: npm run build
 
     - name: Deploy to server
-      run: pwd &&
-        ls &&
-        echo '${{ secrets.SSH_PRIVATE_KEY }}' > pvt-key.txt &&
+      run: echo '${{ secrets.SSH_PRIVATE_KEY }}' > pvt-key.txt &&
         chmod 600 pvt-key.txt &&
         rsync -avz --delete --mkpath
         -e "ssh -o StrictHostKeyChecking=no -i pvt-key.txt"
-        ./dist/discussion-board/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/WebApps/discussion-board/dist &&
+        ./front-end/dist/discussion-board/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/WebApps/discussion-board/dist &&
         rm pvt-key.txt
 

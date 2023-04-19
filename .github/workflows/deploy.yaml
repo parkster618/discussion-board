@@ -7,13 +7,11 @@ on:
 jobs:
   deploy-fe:
     runs-on: ubuntu-latest
+    working-directory: ./front-end
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
-    - name: cd to front-end
-      run: cd front-end
 
     - name: Install production dependencies
       run: pwd && npm install

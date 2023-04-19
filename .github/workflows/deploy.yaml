@@ -7,8 +7,9 @@ on:
 jobs:
   deploy-fe:
     runs-on: ubuntu-latest
-    with:
-      working-directory: front-end
+    defaults:
+      run:
+        working-directory: front-end
 
     steps:
     - name: Checkout code

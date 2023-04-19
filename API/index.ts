@@ -2,7 +2,7 @@
 import express from 'express';
 
 // Setup Scripts
-import { initializeDataSource } from './data-source';
+import { initializeDataSource } from './data-source.js';
 
 async function startApp() {
     await initializeDataSource();

@@ -16,7 +16,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Install production dependencies
-      run: npm install
+      run: npm ci
 
     - name: Build Angular
       run: npm run build
@@ -27,5 +27,43 @@ jobs:
         rsync -avz --delete --mkpath
         -e "ssh -o StrictHostKeyChecking=no -i pvt-key.txt"
         ./dist/discussion-board/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/WebApps/discussion-board/dist &&
+        rm pvt-key.txt
+
+  deploy-be:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: API
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install production dependencies
+      run: npm ci
+
+    - name: Transpile TypeScript
+      run: tsc
+
+    - name: Deploy to server
+      run: echo '${{ secrets.SSH_PRIVATE_KEY }}' > pvt-key.txt && ls &&
+        chmod 600 pvt-key.txt &&
+        rsync -avz --delete --mkpath
+        -e "ssh -o StrictHostKeyChecking=no -i pvt-key.txt"
+        . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/APIs/discussion-board &&
+        rm pvt-key.txt
+
+    - name: Start the app
+      run: echo '${{ secrets.SSH_PRIVATE_KEY }}' > pvt-key.txt &&
+        chmod 600 pvt-key.txt &&
+        ssh -i pvt-key.txt -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+          cd ~/APIs/discussion-board &&
+          pm2 delete discussion-board-API || true &&
+          DB_DBNAME=${{ secrets.DB_DBNAME }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          pm2 start build/index.js --name discussion-board-API
+        ' &&
         rm pvt-key.txt
 

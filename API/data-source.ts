@@ -1,5 +1,5 @@
-import { Prompt } from 'entity/Prompt';
-import { Reply } from 'entity/Reply';
+import { Prompt } from './entity/Prompt.js';
+import { Reply } from './entity/Reply.js';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
@@ -17,5 +17,7 @@ export async function initializeDataSource(): Promise<void> {
         subscribers: [],
         migrations: [],
     });
+    console.log('Connecting DB... ' + process.env.DB_DBNAME + ' at ' + process.env.DB_USERNAME + '@' + process.env.DB_HOST);
     await dataSource.initialize();
+    console.log('Database connected: ' + process.env.DB_DBNAME + ' at ' + process.env.DB_USERNAME + '@' + process.env.DB_HOST);
 }

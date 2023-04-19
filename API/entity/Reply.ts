@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToOne, Relation, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { WithId } from './WithId';
-import { Prompt } from './Prompt';
+import { WithId } from './WithId.js';
+import { Prompt } from './Prompt.js';
 
 @Entity()
 export class Reply extends WithId {

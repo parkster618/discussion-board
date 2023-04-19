@@ -3,14 +3,8 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "NODE_ENV=dev DB_DBNAME=discussion-board DB_HOST=localhost DB_USERNAME=root DB_PASSWORD=parker1 node src/API/dist/bundle.mjs",
-      "name": "dist code",
-      "request": "launch",
-      "type": "node-terminal"
-    },
-    {
-      "command": "NODE_ENV=dev ts-node src/API/index.ts",
-      "name": "ts-node",
+      "command": "cd front-end && npm start",
+      "name": "front-end",
       "request": "launch",
       "type": "node-terminal"
     },

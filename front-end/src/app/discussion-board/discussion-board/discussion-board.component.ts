@@ -1,6 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 import { finalize, switchMap, tap } from 'rxjs/operators';
 import { PromptService } from '../_services/prompt.service';
@@ -140,7 +139,7 @@ export class DiscussionBoardComponent implements OnInit {
             title: 'Delete?',
             showCancelButton: true,
             confirmButtonText: 'Delete',
-        }).then((result) => {
+        }).then((result: any) => {
             if (result.isConfirmed) {
                 reply.isDeleted = true;
                 this._replyService.updateReply(reply).subscribe(() => this._successPopup('Deleted!'));

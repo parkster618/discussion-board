@@ -6,6 +6,8 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { APIInterceptor } from './_services/http.interceptor';
 import { DiscussionBoardModule } from './discussion-board/discussion-board.module';
 import { AppRoutingModule } from './app-routing.module';
+import { DatePipe } from '@angular/common';
+import { CookieService } from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -19,11 +21,15 @@ import { AppRoutingModule } from './app-routing.module';
     HttpClientModule,
     DiscussionBoardModule,
   ],
-  providers: [{
-    provide: HTTP_INTERCEPTORS,
-    useClass: APIInterceptor,
-    multi: true,
-  }],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: APIInterceptor,
+      multi: true,
+    },
+    DatePipe,
+    CookieService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,0 +1,93 @@
+@initials-width: 40px;
+.initials-bubble {
+    margin-top: 5px;
+    border: 2px #776 solid;
+    border-radius: 100%;
+    font-size: 1.1rem;
+    font-weight: 600;
+    height: @initials-width;
+    width: @initials-width;
+    text-align: center;
+}
+
+.initials-bubble-text {
+    margin-top: 5px;
+}
+
+.parent-reply-grid {
+  display: grid;
+  grid-gap: 3px;
+  grid-template-columns: 1fr auto;
+}
+
+.grid-container {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: @initials-width auto;
+}
+
+@parent-edit-offset: 30px;
+.is-parent {
+    position: relative;
+    left: @parent-edit-offset;
+    width: calc(100% - @parent-edit-offset);
+}
+
+@reply-offset: 40px;
+.is-reply {
+    position: relative;
+    left: @reply-offset;
+
+    &:not(button) {
+        width: calc(100% - @reply-offset);
+    }
+}
+
+.edit-symbol {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    z-index: 1;
+
+    &.reported {
+        color: red;
+    }
+
+    &:hover:not(.reported) {
+        color: lightblue;
+    }
+}
+
+hr.parent-hr {
+    position: relative;
+    left: 25px;
+    width: calc(100% - 50px);
+    padding-bottom: 5px;
+
+    &.no-padding {
+        padding-bottom: 0;
+    }
+}
+
+.reply-line {
+    position: absolute;
+    z-index: 1;
+    top: 60px;
+    left: 18px;
+    width: 18px;
+    height: calc(100% - 167px);
+    border: 2px rgba(0, 0, 0, 0) solid;
+    border-bottom-color: rgba(0, 0, 0, .4);
+    border-left-color: rgba(0, 0, 0, .4);
+    border-top-color: transparent;
+    border-bottom-left-radius: 20px;
+
+    &.with-reply-button {
+        height: calc(100% - 100px);
+    }
+}
+
+.btn-small {
+    font-size: .8em;
+    height: 40px;
+}

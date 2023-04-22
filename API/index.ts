@@ -5,8 +5,8 @@ import cors from 'cors';
 // Setup Scripts
 import { initializeDataSource } from './data-source.js';
 import { setUpEnvironment } from './env-setup.js';
-import { PromptCRUD } from './entity/Prompt.js';
-import { Reply, ReplyCRUD } from './entity/Reply.js';
+import { Prompt } from './entity/Prompt.js';
+import { Reply } from './entity/Reply.js';
 
 async function startApp() {
     await setUpEnvironment();
@@ -25,7 +25,7 @@ async function startApp() {
 
     // Prompts endpoints
     app.get('/prompts', async (req: Request, res: Response) => {
-        await tryResponse(res, PromptCRUD.getAll);
+        await tryResponse(res, Prompt.getAll);
         res.end();
     });
     
@@ -37,7 +37,7 @@ async function startApp() {
                 reply[key] = req.body[key];
             }
         }
-        await tryResponse(res, ReplyCRUD.createOrUpdate, reply);
+        await tryResponse(res, Reply.createOrUpdate, reply);
         res.end();
     });
 }

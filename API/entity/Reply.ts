@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, Relation, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, Relation, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToMany } from 'typeorm';
 import { WithId } from './WithId.js';
 import { Prompt } from './Prompt.js';
 import validator from 'validator';
@@ -15,14 +15,20 @@ export class Reply extends WithId {
     @ManyToOne(() => Prompt, (prompt) => prompt.replies)
     prompt: Relation<Prompt>;
 
+    @ManyToOne(() => Reply, (reply) => reply.childReplies)
+    parentReply: Reply;
+
+    @OneToMany(() => Reply, (reply) => reply.parentReply)
+    childReplies: Reply[];
+
+    @Column({ default: false })
+    isDeleted: boolean;
+
     @CreateDateColumn()
     createDate: Date;
 
     @UpdateDateColumn()
     updateDate: Date;
-}
-
-export class ReplyCRUD {
 
     static sanitize(reply: Reply) {
         reply.replyText = validator.escape(reply.replyText);
@@ -36,15 +42,15 @@ export class ReplyCRUD {
     
     /*-------------- CRUD --------------*/
 
-    static createOrUpdate(reply: Reply): void {
+    static createOrUpdate(reply: Reply): Promise<Reply> {
         reply.replyText = validator.escape(reply.replyText);
         reply.replierName = validator.escape(reply.replierName);
-        dataSource.manager.save(reply);
+        return dataSource.manager.save(reply);
     }
 
-    static update(reply: Reply): void {
+    static update(reply: Reply): Promise<Reply> {
         reply.replyText = validator.escape(reply.replyText);
         reply.replierName = validator.escape(reply.replierName);
-        dataSource.manager.save(reply);
+        return dataSource.manager.save(reply);
     }
 }

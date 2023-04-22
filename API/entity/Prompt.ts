@@ -1,6 +1,6 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import { WithId } from './WithId.js';
-import { Reply, ReplyCRUD } from './Reply.js';
+import { Reply } from './Reply.js';
 import { dataSource } from '../data-source.js';
 
 @Entity()
@@ -13,17 +13,20 @@ export class Prompt extends WithId {
 
     @OneToMany(() => Reply, (reply) => reply.prompt)
     replies: Reply[];
-}
-
-export class PromptCRUD {
 
     /*-------------- CRUD --------------*/
 
     static async getAll(): Promise<Prompt[]> {
-        const prompts = await dataSource.manager.find(Prompt, { relations: { replies: true }});
+        const prompts = await dataSource.manager.createQueryBuilder(Prompt, 'p')
+            .leftJoinAndSelect('p.replies', 'r', 'r.parentReplyId IS NULL')
+            .leftJoinAndSelect('r.childReplies', 'cr')
+            .getMany();
         for (const prompt of prompts) {
             for (const reply of prompt.replies) {
-                ReplyCRUD.unsanitize(reply);
+                Reply.unsanitize(reply);
+                for (const childReply of reply.childReplies) {
+                    Reply.unsanitize(childReply);
+                }
             }
         }
         return prompts;

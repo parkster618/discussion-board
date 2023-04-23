@@ -16,9 +16,12 @@
                         <!-- Parent comment -->
                         <ng-container *ngTemplateOutlet="replyTemplate; context: { $implicit: parentReply, indent: false }"></ng-container>
                         <!-- <div *ngIf="reply.childReplies?.length" class="text-nowrap">({{ reply.childReplies.length }} replies)</div> -->
-                        <button class="btn btn-primary btn-small" (click)="visibleParentReplies[i][k] = !visibleParentReplies[i][k]">
+                        <button *ngIf="parentReply.childReplies.length" class="btn btn-primary btn-small" (click)="visibleParentReplies[i][k] = !visibleParentReplies[i][k]">
                             {{ visibleParentReplies[i][k] ? 'Hide' : 'View' }} {{ parentReply.childReplies.length }} {{ parentReply.childReplies.length === 1 ? 'reply' : 'replies' }}
                         </button>
+                        <button *ngIf="!parentReply.childReplies.length" class="btn btn-primary btn-small" (click)="addFirstChildReply(i, k)">
+                          Reply
+                      </button>
                     </div>
                     <ng-container *ngIf="visibleParentReplies[i][k]">
                         <div class="reply-line" [class.with-reply-button]="showReplyButton(i, k)"></div>
@@ -31,7 +34,7 @@
                         <button *ngIf="showReplyButton(i, k)" class="is-reply btn btn-primary mb-4" (click)="openReply(i, k)">Reply</button>
                         <div *ngIf="!showReplyButton(i, k)" class="is-reply">
                             <textarea id="discussion-textarea-{{ i }}-{{ k }}" class="form-control" [(ngModel)]="newChildReplies[i][k]" (keydown)="addNewChildReply(i, k, parentReply.id, $event)" placeholder="Write your reply"></textarea>
-                            <button class="btn btn-secondary float-right mt-2" (click)="cancelReply(i, k)">Cancel</button>
+                            <button class="btn btn-secondary float-right mt-2" (click)="cancelNewChildReply(i, k)">Cancel</button>
                             <button class="btn btn-primary float-right mt-2 mr-2" (click)="addNewChildReply(i, k, parentReply.id)">Post&nbsp;<i class="fa fa-send"></i></button>
                             <br><br><hr>
                         </div>
@@ -40,11 +43,9 @@
                 </div>
             </ng-container>
 
-            <div class="">
-                <div style="overflow: hidden">
-                    <textarea class="form-control" [(ngModel)]="newParentReplies[i]" (keydown)="addNewParentReply(i, $event)" placeholder="Start a new discussion"></textarea>
-                    <button class="btn btn-primary float-right mt-2" (click)="addNewParentReply(i)">Post&nbsp;<i class="fa fa-send"></i></button>
-                </div>
+            <div style="overflow: hidden">
+                <textarea class="form-control" [(ngModel)]="newParentReplies[i]" (keydown)="addNewParentReply(i, $event)" placeholder="Start a new discussion"></textarea>
+                <button class="btn btn-primary float-right mt-2" (click)="addNewParentReply(i)">Post&nbsp;<i class="fa fa-send"></i></button>
             </div>
         </div>
         <hr style="background: darkgrey; border: none; height: 3px; margin-left: -20px; margin-right: -20px;">
@@ -85,7 +86,7 @@
     <div *ngIf="reply.isEditing" [class.is-reply]="indent" [class.is-parent]="!indent">
         Edit:<br />
         <textarea (keydown)="saveEditedReply(reply, $event)" class="form-control" [(ngModel)]="reply.replyText"></textarea>
-        <button class="btn btn-secondary float-right mt-2 ml-2" (click)="reply.isEditing = false; reply.isHovered = false">Cancel</button>
+        <button class="btn btn-secondary float-right mt-2 ml-2" (click)="reply.isEditing = false">Cancel</button>
         <button class="btn btn-primary float-right mt-2 ml-2" (click)="saveEditedReply(reply)">Save</button>
         <br /><br />
     </div>

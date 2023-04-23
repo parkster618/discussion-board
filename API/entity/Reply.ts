@@ -41,7 +41,7 @@ export class Reply extends WithId {
         reply.replierName = validator.unescape(reply.replierName);
     }
 
-    static async buildHtmlFromReply(replyId: number): Promise<string> {
+    static async buildHtmlFromReply(replyId: number): Promise<[string, string]> {
         const rxReply = await dataSource.manager.createQueryBuilder(Reply, 'r')
             .leftJoinAndSelect('r.prompt', 'p')
             .leftJoinAndSelect('r.parentReply', 'pr')
@@ -74,7 +74,7 @@ export class Reply extends WithId {
             }
         }
         toReturn += '</div>';
-        return toReturn;
+        return [toReturn, rxReply.prompt.promptText];
     }
     
     /*-------------- CRUD --------------*/

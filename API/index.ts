@@ -41,7 +41,10 @@ async function startApp() {
         }
         const rxReply = await tryResponse(res, Reply.createOrUpdate, reply);
         if (process.env.ADMIN_EMAIL) {
-            setTimeout(async () => sendEmail(process.env.ADMIN_EMAIL, `Reply in prompt '${reply.prompt.promptText}'`, await Reply.buildHtmlFromReply(rxReply.id)));
+            setTimeout(async () => {
+                const [html, promptText] = await Reply.buildHtmlFromReply(rxReply.id);
+                sendEmail(process.env.ADMIN_EMAIL, `Reply in prompt '${promptText}'`, html);
+            });
         }
         res.end();
     });

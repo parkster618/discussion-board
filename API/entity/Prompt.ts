@@ -24,6 +24,8 @@ export class Prompt extends WithId {
             .leftJoinAndSelect('p.replies', 'r', 'r.parentReplyId IS NULL')
             .leftJoinAndSelect('r.childReplies', 'cr')
             .orderBy('p.order')
+            .addOrderBy('r.createDate')
+            .addOrderBy('cr.createDate')
             .getMany();
         for (const prompt of prompts) {
             for (const reply of prompt.replies) {

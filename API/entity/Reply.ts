@@ -47,10 +47,4 @@ export class Reply extends WithId {
         reply.replierName = validator.escape(reply.replierName);
         return dataSource.manager.save(reply);
     }
-
-    static update(reply: Reply): Promise<Reply> {
-        reply.replyText = validator.escape(reply.replyText);
-        reply.replierName = validator.escape(reply.replierName);
-        return dataSource.manager.save(reply);
-    }
 }

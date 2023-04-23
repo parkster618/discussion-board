@@ -5,12 +5,14 @@ import cors from 'cors';
 // Setup Scripts
 import { initializeDataSource } from './data-source.js';
 import { setUpEnvironment } from './env-setup.js';
+import { setUpNodemailer } from './nodemailer.helper.js';
 import { Prompt } from './entity/Prompt.js';
 import { Reply } from './entity/Reply.js';
 
 async function startApp() {
     await setUpEnvironment();
     await initializeDataSource();
+    await setUpNodemailer();
 
     const PORT = process.env.PORT || 5001;
     const app = express()

@@ -11,6 +11,9 @@ export class Prompt extends WithId {
     @Column()
     dueDate: string;
 
+    @Column({ nullable: true })
+    order: number;
+
     @OneToMany(() => Reply, (reply) => reply.prompt)
     replies: Reply[];
 
@@ -20,7 +23,7 @@ export class Prompt extends WithId {
         const prompts = await dataSource.manager.createQueryBuilder(Prompt, 'p')
             .leftJoinAndSelect('p.replies', 'r', 'r.parentReplyId IS NULL')
             .leftJoinAndSelect('r.childReplies', 'cr')
-            .orderBy('p.dueDate')
+            .orderBy('p.order')
             .getMany();
         for (const prompt of prompts) {
             for (const reply of prompt.replies) {

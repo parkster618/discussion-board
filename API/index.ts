@@ -5,7 +5,7 @@ import cors from 'cors';
 // Setup Scripts
 import { initializeDataSource } from './data-source.js';
 import { setUpEnvironment } from './env-setup.js';
-import { setUpNodemailer } from './nodemailer.helper.js';
+import { sendEmail, setUpNodemailer } from './nodemailer.helper.js';
 import { Prompt } from './entity/Prompt.js';
 import { Reply } from './entity/Reply.js';
 
@@ -39,16 +39,21 @@ async function startApp() {
                 reply[key] = req.body[key];
             }
         }
-        await tryResponse(res, Reply.createOrUpdate, reply);
+        const rxReply = await tryResponse(res, Reply.createOrUpdate, reply);
+        if (process.env.ADMIN_EMAIL) {
+            setTimeout(async () => sendEmail(process.env.ADMIN_EMAIL, `Reply in prompt '${reply.prompt.promptText}'`, await Reply.buildHtmlFromReply(rxReply.id)));
+        }
         res.end();
     });
 }
 
 startApp();
 
-async function tryResponse(res: Response, func: (...args: any[]) => any, ...args: any[]) {
+async function tryResponse(res: Response, func: (...args: any[]) => any, ...args: any[]): Promise<any> {
     try {
-        res.send(await func(...args));
+        let toReturn = await func(...args);
+        res.send(toReturn);
+        return toReturn;
     } catch (e: any) {
         res.status(500)
         res.send(e.stack)

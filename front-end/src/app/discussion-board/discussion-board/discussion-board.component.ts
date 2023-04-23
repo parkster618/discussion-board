@@ -19,7 +19,6 @@ export class DiscussionBoardComponent implements OnInit {
     visiblePrompts: boolean[] = [];
     visibleParentReplies: boolean[][] = [];
     isLoading = false;
-    initialSetup = true;
     username: string | undefined;
 
     constructor(
@@ -42,19 +41,12 @@ export class DiscussionBoardComponent implements OnInit {
         return this._promptService.getAll().pipe(
             tap((prompts) => {
                 this.prompts = prompts;
-                if (this.initialSetup) {
-                    this.visiblePrompts = new Array<boolean>(this.prompts.length);
-                    this.visibleParentReplies = new Array<boolean[]>(this.prompts.length);
-                }
                 this.newParentReplies = new Array<string>(this.prompts.length);
                 this.newChildReplies = new Array<string[]>(this.prompts.length);
                 for (let i = 0; i < this.prompts.length; i++) {
-                    if (this.initialSetup) {
-                        this.visibleParentReplies[i] = new Array<boolean>(this.prompts[i].replies.length);
-                    }
-                    this.newChildReplies[i] = new Array<string>(this.prompts[i].replies.length);
+                    this.visibleParentReplies[i] = [];
+                    this.newChildReplies[i] = [];
                 }
-                this.initialSetup = false;
             }),
             finalize(() => this.isLoading = false),
         );
@@ -71,8 +63,16 @@ export class DiscussionBoardComponent implements OnInit {
         });
     }
 
-    cancelReply(i: number, k: number): void {
+    addFirstChildReply(i: number, k: number): void {
+        this.visibleParentReplies[i][k] = true;
+        this.openReply(i, k);
+    }
+
+    cancelNewChildReply(i: number, k: number): void {
         this.newChildReplies[i][k] = undefined;
+        if (!this.prompts[i].replies[k].childReplies.length) {
+            this.visibleParentReplies[i][k] = false;
+        }
     }
 
     addNewParentReply(i: number, event?: any): void {
@@ -86,10 +86,11 @@ export class DiscussionBoardComponent implements OnInit {
                 this._replyService.addReply(newReply).pipe(
                     tap((rxReply: any) => {
                         rxReply.DateCreated = new Date(rxReply.DateCreated);
+                        rxReply.childReplies = rxReply.childReplies || [];
+                        this.prompts[i].replies.push(rxReply);
                         this.newParentReplies[i] = undefined;
                         this._successPopup();
                     }),
-                    switchMap(() => this._getPrompts()),
                 ).subscribe();
             } else {
                 this._errorPopup('Please enter a text to post');

@@ -1,3 +1,5 @@
+/* ------------- Reply custom styling --------------- */
+
 @initials-width: 40px;
 .initials-bubble {
     margin-top: 5px;
@@ -14,18 +16,6 @@
     margin-top: 5px;
 }
 
-.parent-reply-grid {
-  display: grid;
-  grid-gap: 3px;
-  grid-template-columns: 1fr auto;
-}
-
-.grid-container {
-    display: grid;
-    grid-gap: 15px;
-    grid-template-columns: @initials-width auto;
-}
-
 @parent-edit-offset: 30px;
 .is-parent {
     position: relative;
@@ -40,32 +30,6 @@
 
     &:not(button) {
         width: calc(100% - @reply-offset);
-    }
-}
-
-.edit-symbol {
-    position: absolute;
-    right: 10px;
-    cursor: pointer;
-    z-index: 1;
-
-    &.reported {
-        color: red;
-    }
-
-    &:hover:not(.reported) {
-        color: lightblue;
-    }
-}
-
-hr.parent-hr {
-    position: relative;
-    left: 25px;
-    width: calc(100% - 50px);
-    padding-bottom: 5px;
-
-    &.no-padding {
-        padding-bottom: 0;
     }
 }
 
@@ -87,7 +51,68 @@ hr.parent-hr {
     }
 }
 
+.grid-container {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: @initials-width auto;
+}
+
+/* ------------- General styles --------------- */
+
+.prompt-grid {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+}
+
+.edit-symbol {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.parent-reply-button {
+    position: absolute;
+    right: 0;
+    top: 2px;
+    z-index: 1;
+}
+
+hr.parent-hr {
+    position: relative;
+    left: 25px;
+    width: calc(100% - 50px);
+    padding-bottom: 5px;
+
+    &.no-padding {
+        padding-bottom: 0;
+    }
+}
+
 .btn-small {
-    font-size: .8em;
-    height: 40px;
+    font-size: .7em;
+    height: 25px;
+    line-height: 1em;
+}
+
+.text-middle {
+    display: table-cell;
+    font-size: 13px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+@reply-number-width: 23px;
+.reply-number {
+    width: @reply-number-width;
+    height: @reply-number-width;
+
+    border: solid 2px var(--primary);
+    border-radius: 20px;
+
+    &.new-replies {
+        background-color: var(--primary);
+        color: white;
+    }
 }

@@ -4,25 +4,30 @@
 <br>
 <div *ngIf="prompts && !isLoading" class="container">
     <ng-container *ngFor="let prompt of prompts; let i = index">
-        <button (click)="visiblePrompts[i] = !visiblePrompts[i]" class="btn btn-primary pull-right">
-            <i [class.fa-caret-down]="!visiblePrompts[i]" [class.fa-caret-up]="visiblePrompts[i]" class="fa fa-fw"></i>
-        </button>
-        <h2>{{ prompt.promptText }} ({{ prompt.dueDate }})</h2>
-        <div [hidden]="!visiblePrompts[i]">
+        <div class="prompt-grid">
+            <h2 style="align-self: center">{{ prompt.promptText }} ({{ prompt.dueDate }})</h2>
+            <div style="align-self: center">
+                <div *ngIf="numberOfReplies(i)">
+                    <div [class.new-replies]="newReplies(i)" class="reply-number text-middle mr-1 mt-2">{{ numberOfReplies(i) }}</div>
+                </div>
+            </div>
+            <button (click)="visiblePrompts[i] = !visiblePrompts[i]" class="btn btn-primary" style="position: relative; align-self: center">
+                <i [class.fa-caret-down]="!visiblePrompts[i]" [class.fa-caret-up]="visiblePrompts[i]" class="fa fa-fw"></i>
+            </button>
+        </div>
+        <div [hidden]="!visiblePrompts[i]" class="mt-3">
             <!-- ngFor parent comments -->
             <ng-container *ngFor="let parentReply of prompt.replies; let k = index">
                 <div style="overflow: hidden; position: relative">
-                    <div class="parent-reply-grid">
-                        <!-- Parent comment -->
-                        <ng-container *ngTemplateOutlet="replyTemplate; context: { $implicit: parentReply, indent: false }"></ng-container>
-                        <!-- <div *ngIf="reply.childReplies?.length" class="text-nowrap">({{ reply.childReplies.length }} replies)</div> -->
-                        <button *ngIf="parentReply.childReplies.length" class="btn btn-primary btn-small" (click)="visibleParentReplies[i][k] = !visibleParentReplies[i][k]">
-                            {{ visibleParentReplies[i][k] ? 'Hide' : 'View' }} {{ parentReply.childReplies.length }} {{ parentReply.childReplies.length === 1 ? 'reply' : 'replies' }}
-                        </button>
-                        <button *ngIf="!parentReply.childReplies.length" class="btn btn-primary btn-small" (click)="addFirstChildReply(i, k)">
-                          Reply
-                      </button>
-                    </div>
+                    <button *ngIf="parentReply.childReplies.length" class="parent-reply-button btn btn-primary btn-small" (click)="visibleParentReplies[i][k] = !visibleParentReplies[i][k]">
+                        {{ visibleParentReplies[i][k] ? 'Hide' : 'View' }} {{ parentReply.childReplies.length }} {{ parentReply.childReplies.length === 1 ? 'reply' : 'replies' }}
+                    </button>
+                    <button *ngIf="!parentReply.childReplies.length && !parentReply.isEditing" class="parent-reply-button btn btn-primary btn-small" (click)="addFirstChildReply(i, k)">
+                        Reply
+                    </button>
+                    <!-- Parent comment -->
+                    <ng-container *ngTemplateOutlet="replyTemplate; context: { $implicit: parentReply, indent: false }"></ng-container>
+                    <!-- <div *ngIf="reply.childReplies?.length" class="text-nowrap">({{ reply.childReplies.length }} replies)</div> -->
                     <ng-container *ngIf="visibleParentReplies[i][k]">
                         <div class="reply-line" [class.with-reply-button]="showReplyButton(i, k)"></div>
                         <hr class="parent-hr">
@@ -48,21 +53,21 @@
                 <button class="btn btn-primary float-right mt-2" (click)="addNewParentReply(i)">Post&nbsp;<i class="fa fa-send"></i></button>
             </div>
         </div>
-        <hr style="background: darkgrey; border: none; height: 3px; margin-left: -20px; margin-right: -20px;">
+        <hr style="background: darkgrey; border: none; height: 3px; margin-left: -10px; margin-right: -10px;">
     </ng-container>
 </div>
 <br /><br />
 
 <ng-template #replyTemplate let-reply let-indent="indent">
     <div *ngIf="!reply.isEditing" style="position: relative">
-        <ng-container *ngIf="reply.replierName === username && !reply.isDeleted">
-            <a class="edit-symbol pull-right" [class.mr-4]="!reply.isDeleted" style="margin-top: 2px;">
-                <i (click)="reply.isEditing = true" class="fa fa-edit fa-lg" title="Edit" aria-hidden="false"></i>
-            </a>
-            <a class="edit-symbol pull-right">
+        <div *ngIf="reply.replierName === username && !reply.isDeleted" class="edit-symbol" [style]="'margin-right: ' + editButtonsMargin(reply) + 'px'">
+            <a class="pull-right ml-2">
               <i (click)="deleteReply(reply)" class="fa fa-trash fa-lg" title="Delete" aria-hidden="false"></i>
             </a>
-        </ng-container>
+            <a class="pull-right" style="margin-top: 2px;">
+                <i (click)="reply.isEditing = true" class="fa fa-edit fa-lg" title="Edit" aria-hidden="false"></i>
+            </a>
+        </div>
         <div>
             <div class="grid-container" [class.is-reply]="indent">
                 <div class="initials-bubble">
@@ -71,7 +76,7 @@
                     </div>
                 </div>
                 <div>
-                    <div class="mr-5"><!-- right margin to leave room for edit/trash button -->
+                    <div [style]="'margin-right: ' + userDateMargin(reply) + 'px'"><!-- right margin to leave room for edit, trash, and reply buttons -->
                         <b>
                             {{ reply.replierName }}
                         </b>

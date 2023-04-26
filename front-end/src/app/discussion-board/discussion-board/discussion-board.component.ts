@@ -52,10 +52,6 @@ export class DiscussionBoardComponent implements OnInit {
         );
     }
 
-    showReplyButton(i: number, k: number): boolean {
-        return this.newChildReplies[i][k] == null;
-    }
-
     openReply(i: number, k: number): void {
         this.newChildReplies[i][k] = '';
         setTimeout(() => {
@@ -147,6 +143,40 @@ export class DiscussionBoardComponent implements OnInit {
             }
         });
     }
+
+    /* ------------ Template rendering -------------- */
+
+    showReplyButton(i: number, k: number): boolean {
+        return this.newChildReplies[i][k] == null;
+    }
+
+    numberOfReplies(i: number): number {
+        return (this.prompts[i].replies as any[]).reduce<number>((sum, reply) => sum + 1 + reply.childReplies.length, 0);
+    }
+
+    newReplies(i: number): boolean {
+        return false;
+    }
+
+    userDateMargin(reply: any): number {
+        let toReturn = 0;
+        if (reply.replierName === this.username) {
+            toReturn += 60;
+        }
+        return toReturn + this.editButtonsMargin(reply);
+    }
+
+    editButtonsMargin(reply: any): number {
+        if (!reply.childReplies) {
+            return 0;
+        }
+        if (reply.childReplies?.length) {
+            return 90;
+        }
+        return 55;
+    }
+
+    /* ------------ Popups -------------- */
 
     private _createNewReply(): any {
         return {

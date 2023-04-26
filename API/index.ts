@@ -33,6 +33,7 @@ async function startApp() {
     
     // Replies endpoints
     app.post('/replies', async (req: Request, res: Response) => {
+        let isCreate = !req.body.id;
         const reply = new Reply();
         for (const key of Object.keys(req.body)) {
             if (Object.hasOwn(reply, key)) {
@@ -40,7 +41,7 @@ async function startApp() {
             }
         }
         const rxReply = await tryResponse(res, Reply.createOrUpdate, reply);
-        if (process.env.ADMIN_EMAIL) {
+        if (isCreate && process.env.ADMIN_EMAIL) {
             setTimeout(async () => {
                 const [html, promptText] = await Reply.buildHtmlFromReply(rxReply.id);
                 sendEmail(process.env.ADMIN_EMAIL, `Reply in prompt '${promptText}'`, html);

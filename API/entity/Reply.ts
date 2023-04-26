@@ -7,7 +7,7 @@ import { format } from 'date-and-time';
 
 @Entity()
 export class Reply extends WithId {
-    @Column()
+    @Column({ length: '10000' })
     replyText: string;
 
     @Column()
@@ -79,9 +79,12 @@ export class Reply extends WithId {
     
     /*-------------- CRUD --------------*/
 
-    static createOrUpdate(reply: Reply): Promise<Reply> {
+    static async createOrUpdate(reply: Reply): Promise<Reply> {
         reply.replyText = validator.escape(reply.replyText);
         reply.replierName = validator.escape(reply.replierName);
-        return dataSource.manager.save(reply);
+        const rxReply = await dataSource.manager.save(reply);
+        rxReply.replyText = validator.unescape(rxReply.replyText);
+        rxReply.replierName = validator.unescape(rxReply.replierName);
+        return rxReply;
     }
 }

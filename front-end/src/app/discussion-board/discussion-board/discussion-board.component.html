@@ -2,7 +2,7 @@
     <h1><i>Letters from a Skeptic</i> — Discussion Board</h1>
 </nav>
 <br>
-<div *ngIf="prompts && !isLoading" class="container">
+<div *ngIf="prompts" class="container">
     <ng-container *ngFor="let prompt of prompts; let i = index">
         <div class="prompt-grid">
             <h2 style="align-self: center">{{ prompt.promptText }} ({{ prompt.dueDate }})</h2>
@@ -19,25 +19,25 @@
             <!-- ngFor parent comments -->
             <ng-container *ngFor="let parentReply of prompt.replies; let k = index">
                 <div style="overflow: hidden; position: relative">
-                    <button *ngIf="parentReply.childReplies.length" class="parent-reply-button btn btn-primary btn-small" (click)="visibleParentReplies[i][k] = !visibleParentReplies[i][k]">
+                    <button *ngIf="parentReply.childReplies.length" class="parent-reply-button btn btn-primary btn-small" (click)="viewChildReplies(i, k)">
                         {{ visibleParentReplies[i][k] ? 'Hide' : 'View' }} {{ parentReply.childReplies.length }} {{ parentReply.childReplies.length === 1 ? 'reply' : 'replies' }}
                     </button>
                     <button *ngIf="!parentReply.childReplies.length && !parentReply.isEditing" class="parent-reply-button btn btn-primary btn-small" (click)="addFirstChildReply(i, k)">
                         Reply
                     </button>
                     <!-- Parent comment -->
-                    <ng-container *ngTemplateOutlet="replyTemplate; context: { $implicit: parentReply, indent: false }"></ng-container>
+                    <ng-container *ngTemplateOutlet="replyTemplate; context: { $implicit: parentReply, indent: false, i, k }"></ng-container>
                     <!-- <div *ngIf="reply.childReplies?.length" class="text-nowrap">({{ reply.childReplies.length }} replies)</div> -->
                     <ng-container *ngIf="visibleParentReplies[i][k]">
                         <div class="reply-line" [class.with-reply-button]="showReplyButton(i, k)"></div>
                         <hr class="parent-hr">
                         <!-- ngFor child comments -->
-                        <ng-container *ngFor="let childReply of parentReply.childReplies">
+                        <ng-container *ngFor="let childReply of parentReply.childReplies; let j = index">
                             <!-- Child comment -->
-                            <ng-container *ngTemplateOutlet="replyTemplate; context: { $implicit: childReply, indent: true }"></ng-container>
+                            <ng-container *ngTemplateOutlet="replyTemplate; context: { $implicit: childReply, indent: true, i, k, j }"></ng-container>
                         </ng-container>
                         <button *ngIf="showReplyButton(i, k)" class="is-reply btn btn-primary mb-4" (click)="openReply(i, k)">Reply</button>
-                        <div *ngIf="!showReplyButton(i, k)" class="is-reply">
+                        <div id="reply-{{i}}-{{k}}-new" *ngIf="!showReplyButton(i, k)" class="is-reply">
                             <textarea id="discussion-textarea-{{ i }}-{{ k }}" class="form-control" [(ngModel)]="newChildReplies[i][k]" (keydown)="addNewChildReply(i, k, parentReply.id, $event)" placeholder="Write your reply"></textarea>
                             <button class="btn btn-secondary float-right mt-2" (click)="cancelNewChildReply(i, k)">Cancel</button>
                             <button class="btn btn-primary float-right mt-2 mr-2" (click)="addNewChildReply(i, k, parentReply.id)">Post&nbsp;<i class="fa fa-send"></i></button>
@@ -58,8 +58,8 @@
 </div>
 <br /><br />
 
-<ng-template #replyTemplate let-reply let-indent="indent">
-    <div *ngIf="!reply.isEditing" style="position: relative">
+<ng-template #replyTemplate let-reply let-indent="indent" let-i="i" let-k="k" let-j="j">
+    <div id="reply-{{i}}-{{k}}-{{j}}" *ngIf="!reply.isEditing" style="position: relative">
         <div *ngIf="reply.replierName === username && !reply.isDeleted" class="edit-symbol" [style]="'margin-right: ' + editButtonsMargin(reply) + 'px'">
             <a class="pull-right ml-2">
               <i (click)="deleteReply(reply)" class="fa fa-trash fa-lg" title="Delete" aria-hidden="false"></i>

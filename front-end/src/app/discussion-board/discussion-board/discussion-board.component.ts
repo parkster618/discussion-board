@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest, concat, forkJoin, merge } from 'rxjs';
 import Swal from 'sweetalert2';
-import { finalize, switchMap, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { PromptService } from '../_services/prompt.service';
 import { ReplyService } from '../_services/reply.service';
 import { DatePipe } from '@angular/common';
 import { CookieService } from 'ngx-cookie-service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-discussion-board',
@@ -18,13 +19,14 @@ export class DiscussionBoardComponent implements OnInit {
     newParentReplies!: (string | undefined)[];
     visiblePrompts: boolean[] = [];
     visibleParentReplies: boolean[][] = [];
-    isLoading = false;
     username: string | undefined;
+    goToReplyId: { i: string | undefined, k: string | undefined, j: string | undefined } = { i: undefined, k: undefined, j: undefined };
 
     constructor(
         private _promptService: PromptService,
         private _replyService: ReplyService,
         private _cookieService: CookieService,
+        private _route: ActivatedRoute,
         public datePipe: DatePipe,
     ) {}
 
@@ -33,11 +35,13 @@ export class DiscussionBoardComponent implements OnInit {
         if (!this.username) {
             this._setUsername();
         }
-        this._getPrompts().subscribe();
+
+        combineLatest([this._getPrompts(), this._route.queryParams]).subscribe(([_, params]) => {
+            this._navigateToReply(params['i'], params['k'], params['j']);
+        });
     }
 
     private _getPrompts(): Observable<any> {
-        this.isLoading = true;
         return this._promptService.getAll().pipe(
             tap((prompts) => {
                 this.prompts = prompts;
@@ -48,8 +52,20 @@ export class DiscussionBoardComponent implements OnInit {
                     this.newChildReplies[i] = [];
                 }
             }),
-            finalize(() => this.isLoading = false),
         );
+    }
+
+    private _navigateToReply(i?: string, k?: string, j?: string): void {
+        if (i && k) {
+            this.visiblePrompts[+i] = true;
+            this.visibleParentReplies[+i][+k] = true;
+            setTimeout(() => this.scrollTo(i, k, j || ''));
+        }
+    }
+
+    viewChildReplies(i: number, k: number): void {
+        this.visibleParentReplies[i][k] = !this.visibleParentReplies[i][k];
+        setTimeout(() => this.scrollTo(i, k, 0));
     }
 
     openReply(i: number, k: number): void {
@@ -62,6 +78,7 @@ export class DiscussionBoardComponent implements OnInit {
     addFirstChildReply(i: number, k: number): void {
         this.visibleParentReplies[i][k] = true;
         this.openReply(i, k);
+        setTimeout(() => this.scrollTo(i, k, 'new'));
     }
 
     cancelNewChildReply(i: number, k: number): void {
@@ -142,6 +159,13 @@ export class DiscussionBoardComponent implements OnInit {
                 this._replyService.updateReply(reply).subscribe(() => this._successPopup('Deleted!'));
             }
         });
+    }
+
+    /* ------------ Page interaction -------------- */
+
+    scrollTo(i: number | string, k: number | string, j: number | string): void {
+        const element = document.getElementById(`reply-${i}-${k}-${j}`);
+        element?.scrollIntoView({ behavior: 'smooth' });
     }
 
     /* ------------ Template rendering -------------- */
